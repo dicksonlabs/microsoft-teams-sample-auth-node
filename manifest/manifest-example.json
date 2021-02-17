@@ -1,11 +1,11 @@
-{
+﻿{
   "$schema": "https://developer.microsoft.com/json-schemas/teams/v1.7/MicrosoftTeams.schema.json",
   "manifestVersion": "1.7",
-  "version": "1.0.1",
-  "id": "f7da09f9-5c4a-4be1-820d-dc7e20d10abc",
+  "version": "1.0",
+  "id": "00000000-0000-0000-0000-000000000000",
   "packageName": "com.microsoft.teams.samples.auth",
   "developer": {
-    "name": "Dickson Labs",
+    "name": "Your Name Here",
     "websiteUrl": "https://www.example.com",
     "privacyUrl": "https://www.example.com/PrivacyStatement",
     "termsOfUseUrl": "https://www.example.com/TermsOfUse"
@@ -27,7 +27,7 @@
   ],
   "staticTabs": [
     {
-      "contentUrl": "https://oauth-teams.ngrok.io/tab/simple",
+      "contentUrl": "https://<<BASE_URI_DOMAIN>>/tab/simple",
       "entityId": "simpleAuth",
       "name": "Simple Auth",
       "scopes": [
@@ -35,7 +35,7 @@
       ]
     },
     {
-      "contentUrl": "https://oauth-teams.ngrok.io/tab/silent?loginHint={loginHint}&userObjectId={userObjectId}&tenantId={tid}",
+      "contentUrl": "https://<<BASE_URI_DOMAIN>>/tab/silent?loginHint={loginHint}&userObjectId={userObjectId}&tenantId={tid}",
       "entityId": "silentAuth",
       "name": "Silent Auth",
       "scopes": [
@@ -43,7 +43,7 @@
       ]
     },
     {
-      "contentUrl": "https://oauth-teams.ngrok.io/tab/sso",
+      "contentUrl": "https://<<BASE_URI_DOMAIN>>/tab/sso",
       "entityId": "ssoAuth",
       "name": "SSO Auth",
       "scopes": [
@@ -53,7 +53,7 @@
   ],
   "bots": [
     {
-      "botId": "f7da09f9-5c4a-4be1-820d-dc7e20d10abc",
+      "botId": "<<REGISTERED_BOT_ID>>",
       "scopes": [
         "personal"
       ]
@@ -64,11 +64,11 @@
     "identity"
   ],
   "validDomains": [
-    "oauth-teams.ngrok.io",
+    "<<BASE_URI_DOMAIN>>",
     "token.botframework.com"
   ],
   "webApplicationInfo": {
-      "id": "f7da09f9-5c4a-4be1-820d-dc7e20d10abc",
-      "resource": "api://oauth-teams.ngrok.io/f7da09f9-5c4a-4be1-820d-dc7e20d10abc"
+      "id": "<<REGISTERED_BOT_ID>>",
+      "resource": "api://<<BASE_URI_DOMAIN>>/<<REGISTERED_BOT_ID>>"
   }
 }

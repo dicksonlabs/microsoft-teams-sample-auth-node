@@ -1,0 +1,1 @@
+npm run build; env BASE_URI="oauth-teams.ngrok.io" MICROSOFT_APP_ID=f7da09f9-5c4a-4be1-820d-dc7e20d10abc MICROSOFT_APP_PASSWORD="jo.8pKx3E8i1yf.eW4kC5b6qPP_.iQ5Lqh" GOOGLE_CONNECTIONNAME="Google OAuth"  npm run debug
