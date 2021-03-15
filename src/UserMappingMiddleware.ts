@@ -27,23 +27,28 @@ import * as builder from "botbuilder";
 // This is a memory-based store for demonstration purposes only
 export class UserMappingMiddleware {
 
-    constructor(
-        private aadObjectIdToBotUserMap: Map<string, any>, 
-    )
-    { }
+  constructor(
+    private aadObjectIdToBotUserMap: Map<string, any>,
+  )
+  { }
 
-    public async onTurn(context: builder.TurnContext, next) {
-        if (!context) {
-            throw new Error('Context is null');
-        };
-
-        const activity = context.activity;
-        if (activity.channelId === "msteams" && 
-            (activity.type === "conversationUpdate" || activity.type === "message" || activity.type === "invoke")) {
-            this.aadObjectIdToBotUserMap.set(activity.from.aadObjectId, 
-                { userId: activity.from.id, conversationId: activity.conversation.id, serviceUrl: activity.serviceUrl });
-        }
-
-        await next();
+  public async onTurn(context: builder.TurnContext, next) {
+    if (!context) {
+      throw new Error('Context is null');
     };
+
+    const activity = context.activity;
+
+    console.log(activity);
+    console.log("mapping activity");
+    if (activity.channelId === "msteams" || activity.channelId === "webchat" &&
+      (activity.type === "conversationUpdate" || activity.type === "message" || activity.type === "invoke")) {
+      console.log("Adding activity to map for aadObjectId: ");
+      console.log(activity.from.aadObjectId);
+      this.aadObjectIdToBotUserMap.set(activity.from.aadObjectId,
+                                       { userId: activity.from.id, conversationId: activity.conversation.id, serviceUrl: activity.serviceUrl });
+    }
+
+    await next();
+  };
 }

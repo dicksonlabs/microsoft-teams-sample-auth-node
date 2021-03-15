@@ -34,93 +34,98 @@ import { IdentityProviderDialog } from "./dialogs/IdentityProviderDialog";
 
 export class AuthBot extends builder.TeamsActivityHandler {
 
-    private aadObjectIdToBotUserMap: Map<string, any>;
-    private dialogState: builder.StatePropertyAccessor<any>;
+  private aadObjectIdToBotUserMap: Map<string, any>;
+  private dialogState: builder.StatePropertyAccessor<any>;
 
-    constructor(
-        private adapter: builder.BotFrameworkAdapter,
-        private conversationState: builder.ConversationState,
-        private userState: builder.UserState,
-        private rootDialog: RootDialog,
-        private identityProviderDialogs: IdentityProviderDialog[],
-    )
-    {
-        super();
-        this.dialogState = this.conversationState.createProperty("DialogState");
+  constructor(
+    private adapter: builder.BotFrameworkAdapter,
+    private conversationState: builder.ConversationState,
+    private userState: builder.UserState,
+    private rootDialog: RootDialog,
+    private identityProviderDialogs: IdentityProviderDialog[],
+  )
+  {
+    super();
+    this.dialogState = this.conversationState.createProperty("DialogState");
 
-        this.aadObjectIdToBotUserMap = new Map<string, any>();
-        this.adapter.use(new UserMappingMiddleware(this.aadObjectIdToBotUserMap));
-                
-        this.adapter.onTurnError = this.onTurnError.bind(this);
+    this.aadObjectIdToBotUserMap = new Map<string, any>();
+    this.adapter.use(new UserMappingMiddleware(this.aadObjectIdToBotUserMap));
 
-        this.onMessage(async (context, next) => {
-            await this.rootDialog.run(context, this.dialogState);
-            await next();
+    this.adapter.onTurnError = this.onTurnError.bind(this);
+
+    this.onMessage(async (context, next) => {
+      await this.rootDialog.run(context, this.dialogState);
+      await next();
+    });
+  }
+
+  public async run(context: builder.TurnContext) {
+    await super.run(context);
+
+    // Save any state changes. The load happened during the execution of the Dialog.
+    await this.conversationState.saveChanges(context, false);
+    await this.userState.saveChanges(context, false);
+  }
+
+  // Get the user's profile information from all the identity providers that we have tokens for
+  public async getUserProfilesAsync(aadObjectId: string): Promise<any> {
+    let profiles = {};
+
+    // Get 29:xxx ID of the user
+    console.log("getUserProfilesAsync");
+    debugger;
+    if (this.aadObjectIdToBotUserMap.has(aadObjectId)) {
+      const { userId, conversationId, serviceUrl } = this.aadObjectIdToBotUserMap.get(aadObjectId);
+
+      let conversationRef: Partial<ConversationReference> = {
+        bot: { id: "28:" + config.get("bot.appId") } as ChannelAccount,
+        user: { id: userId } as ChannelAccount,
+        conversation: { id: conversationId } as ConversationAccount,
+        serviceUrl: serviceUrl,
+      };
+
+      await this.adapter.continueConversation(conversationRef, async (context: builder.TurnContext) => {
+        var tasks = this.identityProviderDialogs.map(async (dialog) => {
+          console.log(dialog);
+          console.log("Fetching user data from dialog");
+          var profile = await dialog.getProfileAsync(context);
+          if (profile) {
+            profiles[dialog.displayName] = profile;
+          }
         });
+        await Promise.all(tasks);
+      });
+    } else {
+      console.log("User was not found in the store");
+      // User was not found in the store
     }
 
-    public async run(context: builder.TurnContext) {
-        await super.run(context);
+    return profiles;
+  }
 
-        // Save any state changes. The load happened during the execution of the Dialog.
-        await this.conversationState.saveChanges(context, false);
-        await this.userState.saveChanges(context, false);
-    }
+  protected async handleTeamsSigninVerifyState(context, state) {
+    await this.rootDialog.run(context, this.dialogState);
+  }
 
-    // Get the user's profile information from all the identity providers that we have tokens for
-    public async getUserProfilesAsync(aadObjectId: string): Promise<any> {
-        let profiles = {};
+  private async onTurnError(context: builder.TurnContext, error: Error) {
+    // This check writes out errors to console log .vs. app insights.
+    // NOTE: In production environment, you should consider logging this to Azure
+    //       application insights.
+    console.error(`\n [onTurnError] unhandled error: ${ error }`);
 
-        // Get 29:xxx ID of the user
-        if (this.aadObjectIdToBotUserMap.has(aadObjectId)) {
-            const { userId, conversationId, serviceUrl } = this.aadObjectIdToBotUserMap.get(aadObjectId);
+    // Send a trace activity, which will be displayed in Bot Framework Emulator
+    await context.sendTraceActivity(
+      'OnTurnError Trace',
+      `${ error }`,
+      'https://www.botframework.com/schemas/error',
+      'TurnError'
+    );
 
-            let conversationRef: Partial<ConversationReference> = {
-                bot: { id: "28:" + config.get("bot.appId") } as ChannelAccount,
-                user: { id: userId } as ChannelAccount,
-                conversation: { id: conversationId } as ConversationAccount,
-                serviceUrl: serviceUrl,
-            };
+    // Send a message to the user
+    await context.sendActivity('The bot encountered an error or bug.');
+    await context.sendActivity('To continue to run this bot, please fix the bot source code.');
 
-            await this.adapter.continueConversation(conversationRef, async (context: builder.TurnContext) => {
-                var tasks = this.identityProviderDialogs.map(async (dialog) => {
-                    var profile = await dialog.getProfileAsync(context);
-                    if (profile) {
-                        profiles[dialog.displayName] = profile;
-                    }
-                });
-                await Promise.all(tasks);
-            });
-        } else {
-            // User was not found in the store
-        }
-
-        return profiles;
-    }
-
-    protected async handleTeamsSigninVerifyState(context, state) {
-        await this.rootDialog.run(context, this.dialogState);
-    }
-    
-    private async onTurnError(context: builder.TurnContext, error: Error) {
-        // This check writes out errors to console log .vs. app insights.
-        // NOTE: In production environment, you should consider logging this to Azure
-        //       application insights.
-        console.error(`\n [onTurnError] unhandled error: ${ error }`);
-
-        // Send a trace activity, which will be displayed in Bot Framework Emulator
-        await context.sendTraceActivity(
-            'OnTurnError Trace',
-            `${ error }`,
-            'https://www.botframework.com/schemas/error',
-            'TurnError'
-        );
-
-        // Send a message to the user
-        await context.sendActivity('The bot encountered an error or bug.');
-        await context.sendActivity('To continue to run this bot, please fix the bot source code.');
-
-        // Clear out state
-        await this.conversationState.clear(context);
-    }
+    // Clear out state
+    await this.conversationState.clear(context);
+  }
 }

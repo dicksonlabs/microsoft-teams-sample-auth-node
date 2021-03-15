@@ -37,6 +37,7 @@ import { RootDialog } from "./dialogs/RootDialog";
 import { AzureADDialog } from "./dialogs/AzureADDialog";
 import { LinkedInDialog } from "./dialogs/LinkedInDialog";
 import { GoogleDialog } from "./dialogs/GoogleDialog";
+import { HuddleDialog } from "./dialogs/HuddleDialog";
 
 let app = express();
 let appId = config.get("app.appId");
@@ -70,14 +71,20 @@ const adapter = new builder.BotFrameworkAdapter({
 // Create dialogs and bot
 const identityProviderDialogs = [];
 
+
 function addDialog<TDialog>(TCreator: { new (connectionName: string): TDialog}, configurationName: string) {
-    if (config.has(configurationName) && config.get(configurationName)) {
-        identityProviderDialogs.push(new TCreator(config.get(configurationName)));
-    }
+  console.log("Attempting to add dialog", configurationName);
+  if (config.has(configurationName) && config.get(configurationName)) {
+    console.log(configurationName);
+    console.log("Added dialog ^^^");
+    console.log(config.get(configurationName));
+    identityProviderDialogs.push(new TCreator(config.get(configurationName)));
+  }
 }
 addDialog(AzureADDialog, "azureAD.connectionName");
 addDialog(LinkedInDialog, "linkedIn.connectionName");
 addDialog(GoogleDialog, "google.connectionName");
+addDialog(HuddleDialog, "huddle.connectionName");
 
 let bot = new AuthBot(adapter, conversationState, userState, new RootDialog(identityProviderDialogs), identityProviderDialogs);
 

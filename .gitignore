@@ -68,5 +68,5 @@ manifest/authbot-debug/**
 manifest/authbot-debug.zip
 manifest/manifest_AuthBot.json
 
-# MacOS
+# MacOS files
 .DS_Store

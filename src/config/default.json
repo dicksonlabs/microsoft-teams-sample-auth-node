@@ -16,6 +16,9 @@
     "google": {
         "connectionName": ""
     },
+    "huddle": {
+        "connectionName": ""
+    },
     "storage": "memory",
     "features": {
     }

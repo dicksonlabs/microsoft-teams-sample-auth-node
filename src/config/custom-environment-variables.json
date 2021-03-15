@@ -16,5 +16,8 @@
     },
     "google": {
         "connectionName": "GOOGLE_CONNECTIONNAME"
+    },
+    "huddle": {
+      "connectionName": "HUDDLE_CONNECTIONNAME"
     }
 }
