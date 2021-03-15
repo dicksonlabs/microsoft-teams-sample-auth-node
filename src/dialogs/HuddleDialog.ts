@@ -49,8 +49,8 @@ export class HuddleDialog extends IdentityProviderDialog {
         const profile = await request.get(options);
         return {  // FIXME: add email, photo to Huddle APi.
             name: profile.user.name,
-            email: 'placeholder@example.org', // fixme
-            photo: 'https://robohash.org/ian'  // FIXME
+            email: profile.user.email,
+            photo: profile.user.photo_url
         };
     }
 
