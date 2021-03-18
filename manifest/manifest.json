@@ -2,7 +2,7 @@
   "$schema": "https://developer.microsoft.com/json-schemas/teams/v1.7/MicrosoftTeams.schema.json",
   "manifestVersion": "1.7",
   "version": "1.0.1",
-  "id": "f7da09f9-5c4a-4be1-820d-dc7e20d10abc",
+  "id": "2bb9dc4d-20cd-4cca-a263-ce7a6c516762",
   "packageName": "com.microsoft.teams.samples.auth",
   "developer": {
     "name": "Dickson Labs",
@@ -53,7 +53,7 @@
   ],
   "bots": [
     {
-      "botId": "f7da09f9-5c4a-4be1-820d-dc7e20d10abc",
+      "botId": "2bb9dc4d-20cd-4cca-a263-ce7a6c516762",
       "scopes": [
         "personal"
       ]
@@ -68,7 +68,7 @@
     "token.botframework.com"
   ],
   "webApplicationInfo": {
-      "id": "f7da09f9-5c4a-4be1-820d-dc7e20d10abc",
-      "resource": "api://oauth-teams.ngrok.io/f7da09f9-5c4a-4be1-820d-dc7e20d10abc"
+      "id": "2bb9dc4d-20cd-4cca-a263-ce7a6c516762",
+      "resource": "api://oauth-teams.ngrok.io/2bb9dc4d-20cd-4cca-a263-ce7a6c516762"
   }
 }
