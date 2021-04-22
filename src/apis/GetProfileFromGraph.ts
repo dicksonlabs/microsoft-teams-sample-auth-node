@@ -77,7 +77,7 @@ export class GetProfileFromGraph {
                     throw new Error(`Unsupported Azure AD endpoint version ${token.ver}`);
             }
 
-            try {
+          try {
                 let tokenResponse = await request.post({ url: tokenEndpoint, form: params, json: true });
                 graphAccessToken = tokenResponse.access_token;
             }
@@ -85,7 +85,7 @@ export class GetProfileFromGraph {
                 console.error("Error getting access token for Graph via On-Behalf-Of: ", ex);
 
                 // If this exception is due to additional consent required, the client code can use this show a consent popup.
-                // A production app should carefully examine server information sent to the client, to avoid leaking information inadvertently 
+                // A production app should carefully examine server information sent to the client, to avoid leaking information inadvertently
                 if (ex.error && (ex.error.error === "invalid_grant" || ex.error.error === "interaction_required")) {
                     res.status(403).send(ex.error.error);
                 } else {

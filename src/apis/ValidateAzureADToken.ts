@@ -37,7 +37,7 @@ export class ValidateAzureADToken {
     public listen(): express.RequestHandler {
         return (req: express.Request, res: express.Response, next: any) => {
             // Get bearer token
-            let authHeaderMatch = /^Bearer (.*)/i.exec(req.header("authorization"));
+            const authHeaderMatch = /^Bearer (.*)/i.exec(req.header("authorization"));
             if (!authHeaderMatch) {
                 console.error("No Authorization header provided");
                 res.sendStatus(401);

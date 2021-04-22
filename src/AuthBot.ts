@@ -63,6 +63,9 @@ export class AuthBot extends builder.TeamsActivityHandler {
     await super.run(context);
 
     // Save any state changes. The load happened during the execution of the Dialog.
+    console.log("RUNNING THE JUNGLE")
+    console.log("saving the conversation and user state")
+
     await this.conversationState.saveChanges(context, false);
     await this.userState.saveChanges(context, false);
   }
@@ -72,8 +75,6 @@ export class AuthBot extends builder.TeamsActivityHandler {
     let profiles = {};
 
     // Get 29:xxx ID of the user
-    console.log("getUserProfilesAsync");
-    debugger;
     if (this.aadObjectIdToBotUserMap.has(aadObjectId)) {
       const { userId, conversationId, serviceUrl } = this.aadObjectIdToBotUserMap.get(aadObjectId);
 
@@ -86,7 +87,7 @@ export class AuthBot extends builder.TeamsActivityHandler {
 
       await this.adapter.continueConversation(conversationRef, async (context: builder.TurnContext) => {
         var tasks = this.identityProviderDialogs.map(async (dialog) => {
-          console.log(dialog);
+          console.log(JSON.stringfigy(dialog, null, 2));
           console.log("Fetching user data from dialog");
           var profile = await dialog.getProfileAsync(context);
           if (profile) {
@@ -104,6 +105,8 @@ export class AuthBot extends builder.TeamsActivityHandler {
   }
 
   protected async handleTeamsSigninVerifyState(context, state) {
+    console.log("handleTeamsSigninVerifyState <-------------------")
+    console.log(JSON.stringify(this.dialogState, null, 2))
     await this.rootDialog.run(context, this.dialogState);
   }
 

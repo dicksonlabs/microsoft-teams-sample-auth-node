@@ -57,7 +57,13 @@ export class RootDialog extends dialogs.ComponentDialog {
 
         const dialogContext = await dialogSet.createContext(context);
         const results = await dialogContext.continueDialog();
-        if (results.status === dialogs.DialogTurnStatus.empty) {
+
+
+      // what should the dialogstate look like?
+      console.log("RUNNING THE JUNGLE! STATE:");
+      console.log(JSON.stringify(accessor, null, 2));
+
+      if (results.status === dialogs.DialogTurnStatus.empty) {
             await dialogContext.beginDialog(this.id);
         }
     }

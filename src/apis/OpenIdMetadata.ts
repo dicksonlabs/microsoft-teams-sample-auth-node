@@ -22,8 +22,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import * as request from "request";
-let getPem = require("rsa-pem-from-mod-exp");
-let base64url = require("base64url");
+const getPem = require("rsa-pem-from-mod-exp");
+const base64url = require("base64url");
 
 // Handles fetching and caching OpenId key metadata
 export class OpenIdMetadata {
@@ -40,7 +40,7 @@ export class OpenIdMetadata {
     // Get the key data for the given key id
     public getKey(keyId: string, cb: (key: IOpenIdMetadataKey) => void): void {
         // If keys are more than 5 days old, refresh them
-        let now = new Date().getTime();
+        const now = new Date().getTime();
         if (this.lastUpdated < (now - 1000 * 60 * 60 * 24 * 5)) {
             this.refreshCache((err) => {
                 if (err) {
@@ -49,12 +49,12 @@ export class OpenIdMetadata {
                 }
 
                 // Search the cache even if we failed to refresh
-                let key = this.findKey(keyId);
+                const key = this.findKey(keyId);
                 cb(key);
             });
         } else {
             // Otherwise read from cache
-            let key = this.findKey(keyId);
+          const key = this.findKey(keyId);
             cb(key);
         }
     }
@@ -69,7 +69,7 @@ export class OpenIdMetadata {
     }
 
     private refreshCache(cb: (err: Error) => void): void {
-        let options: request.Options = {
+        const options: request.Options = {
             method: "GET",
             url: this.url,
             json: true,
@@ -83,11 +83,11 @@ export class OpenIdMetadata {
             if (err) {
                 cb(err);
             } else {
-                let openIdConfig = body as IOpenIdConfig;
+                const openIdConfig = body as IOpenIdConfig;
                 this.issuer = openIdConfig.issuer;
 
                 // tslint:disable-next-line:no-shadowed-variable
-                let options: request.Options = {
+                const options: request.Options = {
                     method: "GET",
                     url: openIdConfig.jwks_uri,
                     json: true,
